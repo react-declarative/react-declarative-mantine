@@ -25,12 +25,12 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "react-declarative": path.resolve(__dirname, "../dist/index.modern.js"),
+      "react-declarative-mantine": path.resolve(__dirname, "../dist/index.esm.js"),
     },
   },
   optimizeDeps: {
     exclude: [
-      'react-declarative'
+      'react-declarative-mantine'
     ]
   }
 })

@@ -11,7 +11,6 @@ import Switch from './components/Switch';
 import YesNo from './components/YesNo';
 import Choose from './components/Choose';
 import Complete from './components/Complete';
-import Icon from './components/Icon';
 import Date from './components/Date';
 import Slider from './components/Slider';
 import Tree from './components/Tree';
@@ -27,7 +26,6 @@ export const defaultSlots = {
     Combo,
     Complete,
     Date,
-    Icon,
     Items,
     Radio,
     Slider,

@@ -13,6 +13,6 @@ function copyFolderSync(from, to) {
     });
 }
 
-rimraf(path.join(__dirname, `../node_modules/react-declarative`), () => null)
+rimraf(path.join(__dirname, `../node_modules/react-declarative-mantine`), () => null)
 
-copyFolderSync(path.join(__dirname, `../../dist`), path.join(__dirname, `../node_modules/react-declarative`))
+copyFolderSync(path.join(__dirname, `../../dist`), path.join(__dirname, `../node_modules/react-declarative-mantine`))
