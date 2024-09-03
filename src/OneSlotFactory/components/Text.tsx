@@ -5,7 +5,7 @@ import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import CircularProgress from "@mui/material/CircularProgress";
 
-import { TextInput } from '@mantine/core';
+import { Textarea, TextInput } from '@mantine/core';
 
 import { IField, formatText, ITextSlot, useOnePayload, useOneState } from "react-declarative";
 import IManaged, { PickProp } from "react-declarative/model/IManaged";
@@ -136,18 +136,6 @@ const icons = (
 });
 
 /**
- * Creates an object representing a multiline based on the number of input rows.
- *
- * @param inputRows - The number of input rows.
- * @returns - The multiline object.
- *
- */
-const multiline = (inputRows: number) => ({
-  multiline: inputRows > 1,
-  rows: inputRows,
-});
-
-/**
  * Retrieves the current caret position within an HTML input or textarea element.
  *
  * @param element - The input or textarea element.
@@ -211,7 +199,7 @@ export const Text = ({
   trailingIconTabIndex,
   leadingIconRipple: lir = true,
   trailingIconRipple: tir = true,
-  inputRows: rows = 1,
+  inputRows = 1,
   placeholder = "",
   inputAutocomplete: autoComplete = "off",
   inputFormatterSymbol: symbol = "0",
@@ -305,6 +293,48 @@ export const Text = ({
     }
   }, [value]);
 
+  if (inputRows > 1) {
+    return (
+      <Textarea
+        {...MANTINE_CONFIG}
+        ref={(input) => {
+          inputElementRef.current = input as unknown as HTMLInputElement;
+          inputRef && inputRef(input as unknown as HTMLInputElement);
+        }}
+        label={title}
+        error={(dirty && (invalid || incorrect))}
+        minRows={inputRows}
+        maxRows={inputRows}
+        description={description}
+        inputMode={inputMode}
+        autoFocus={autoFocus}
+        autoComplete={autoComplete}
+        value={loading ? LOADING_LABEL : String(value || "")}
+        placeholder={placeholder}
+        {...icons(
+          object,
+          payload,
+          li,
+          ti,
+          lic,
+          tic,
+          leadingIconTabIndex,
+          trailingIconTabIndex,
+          loading,
+          disabled,
+          !!readonly,
+          (value || "").toString(),
+          onChange,
+          handleChange,
+          lir,
+          tir
+        )}
+        onChange={({ target }) => onChange(target.value)}
+        disabled={disabled}
+      />
+    );
+  }
+
   return (
     <TextInput
       {...MANTINE_CONFIG}
@@ -353,7 +383,6 @@ export const Text = ({
         onChange(result);
       }}
       disabled={disabled}
-      {...multiline(rows)}
     />
   );
 };
