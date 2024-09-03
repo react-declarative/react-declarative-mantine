@@ -3,7 +3,8 @@
     "outDir": "dist",
     "module": "esnext",
     "lib": [
-      "esnext"
+      "esnext",
+      "dom"
     ],
     "moduleResolution": "node",
     "jsx": "react",

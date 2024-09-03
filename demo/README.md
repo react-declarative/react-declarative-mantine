@@ -1,3 +1,5 @@
-# demo
+# Mantine Vite template
 
-> Don't forget to run `npm install` after rebuild of main package
+Get started with the template by clicking `Use this template` button on the top of the page.
+
+[Documentation](https://mantine.dev/guides/vite/)
