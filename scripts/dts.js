@@ -34,3 +34,5 @@ glob.sync("./dist/**/*.d.ts").forEach((file) => {
 glob.sync("./dist/*").forEach((file) => {
     fs.lstatSync(file).isDirectory() && rimraf.sync(file); 
 });
+
+fs.renameSync("./dist/react-declarative-mantine.d.ts", "./dist/index.d.ts")

@@ -1,12 +1,16 @@
-import * as React from "react";
-import { useMemo, useRef, useLayoutEffect } from "react";
+import * as React from 'react';
+import { useMemo, useRef, useLayoutEffect, createElement } from "react";
 
 import IconButton from "@mui/material/IconButton";
-import MatTextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import CircularProgress from "@mui/material/CircularProgress";
+
+import { TextInput } from '@mantine/core';
+
 import { IField, formatText, ITextSlot, useOnePayload, useOneState } from "react-declarative";
 import IManaged, { PickProp } from "react-declarative/model/IManaged";
+
+import { MANTINE_CONFIG } from '../../config';
 
 const LOADING_LABEL = "Loading";
 const NEVER_POS = Symbol("never-pos");
@@ -50,84 +54,84 @@ const icons = (
 ) => ({
   ...(leadingIcon
     ? {
-        startAdornment: (
-          <InputAdornment sx={{ position: "relative" }} position="start">
-            <IconButton
-              edge="start"
-              disabled={disabled}
-              disableRipple={!leadingIconRipple}
-              tabIndex={leadingIconTabIndex}
-              onClick={() => {
-                if (leadingIconClick) {
-                  leadingIconClick(
-                    v as unknown as any,
-                    data,
-                    payload,
-                    (v) =>
-                      c(v, {
-                        skipReadonly: true,
-                      }),
-                    cc
-                  );
-                }
-              }}
-            >
-              {React.createElement(leadingIcon, {
-                data,
-                payload,
-                disabled,
-                readonly,
-              })}
-            </IconButton>
-          </InputAdornment>
-        ),
-      }
+      leftSection: (
+        <InputAdornment sx={{ position: "relative" }} position="start">
+          <IconButton
+            edge="start"
+            disabled={disabled}
+            disableRipple={!leadingIconRipple}
+            tabIndex={leadingIconTabIndex}
+            onClick={() => {
+              if (leadingIconClick) {
+                leadingIconClick(
+                  v as unknown as any,
+                  data,
+                  payload,
+                  (v) =>
+                    c(v, {
+                      skipReadonly: true,
+                    }),
+                  cc
+                );
+              }
+            }}
+          >
+            {createElement(leadingIcon, {
+              data,
+              payload,
+              disabled,
+              readonly,
+            })}
+          </IconButton>
+        </InputAdornment>
+      ),
+    }
     : {}),
   ...(trailingIcon && !loading
     ? {
-        endAdornment: (
-          <InputAdornment sx={{ position: "relative" }} position="end">
-            <IconButton
-              edge="end"
-              disabled={disabled}
-              disableRipple={!trailingIconRipple}
-              tabIndex={trailingIconTabIndex}
-              onClick={() => {
-                if (trailingIconClick) {
-                  trailingIconClick(
-                    v as unknown as any,
-                    data,
-                    payload,
-                    (v) =>
-                      c(v, {
-                        skipReadonly: true,
-                      }),
-                    cc
-                  );
-                }
-              }}
-            >
-              {React.createElement(trailingIcon, {
-                data,
-                payload,
-                disabled,
-                readonly,
-              })}
-            </IconButton>
-          </InputAdornment>
-        ),
-      }
+      rightSection: (
+        <InputAdornment sx={{ position: "relative" }} position="end">
+          <IconButton
+            edge="end"
+            disabled={disabled}
+            disableRipple={!trailingIconRipple}
+            tabIndex={trailingIconTabIndex}
+            onClick={() => {
+              if (trailingIconClick) {
+                trailingIconClick(
+                  v as unknown as any,
+                  data,
+                  payload,
+                  (v) =>
+                    c(v, {
+                      skipReadonly: true,
+                    }),
+                  cc
+                );
+              }
+            }}
+          >
+            {createElement(trailingIcon, {
+              data,
+              payload,
+              disabled,
+              readonly,
+            })}
+          </IconButton>
+        </InputAdornment>
+      ),
+    }
     : {}),
   ...(loading
     ? {
-        endAdornment: (
-          <InputAdornment sx={{ position: "relative" }} position="end">
-            <IconButton disabled={disabled} edge="end">
-              <CircularProgress color="inherit" size={20} />
-            </IconButton>
-          </InputAdornment>
-        ),
-      }
+      rightSection: (
+        <InputAdornment sx={{ position: "relative" }} position="end">
+          <IconButton disabled={disabled} edge="end">
+            <CircularProgress color="inherit" size={20} />
+          </IconButton>
+        </InputAdornment>
+      ),
+    }
     : {}),
 });
 
@@ -197,9 +201,7 @@ export const Text = ({
   inputType = "text",
   inputMode = "text",
   inputPattern = undefined,
-  labelShrink,
   description = "",
-  outlined = false,
   title = "",
   leadingIcon: li,
   trailingIcon: ti,
@@ -304,63 +306,40 @@ export const Text = ({
   }, [value]);
 
   return (
-    <MatTextField
-      sx={{
-        ...(!outlined && {
-          position: "relative",
-          mt: 1,
-          "& .MuiFormHelperText-root": {
-            position: "absolute",
-            top: "100%",
-          },
-        }),
-      }}
-      inputRef={(input: HTMLInputElement | null) => {
+    <TextInput
+      {...MANTINE_CONFIG}
+      ref={(input: HTMLInputElement | null) => {
         inputElementRef.current = input;
         inputRef && inputRef(input);
       }}
-      variant={outlined ? "outlined" : "standard"}
-      helperText={(dirty && (invalid || incorrect)) || description}
-      error={dirty && (invalid !== null || incorrect !== null)}
-      InputProps={{
-        autoComplete: autoComplete,
-        readOnly: readonly,
-        inputMode,
-        autoFocus,
-        ...icons(
-          object,
-          payload,
-          li,
-          ti,
-          lic,
-          tic,
-          leadingIconTabIndex,
-          trailingIconTabIndex,
-          loading,
-          disabled,
-          !!readonly,
-          (value || "").toString(),
-          onChange,
-          handleChange,
-          lir,
-          tir
-        ),
-      }}
-      inputProps={{
-        pattern: inputPattern,
-      }}
-      InputLabelProps={
-        labelShrink
-          ? {
-              shrink: labelShrink,
-            }
-          : undefined
-      }
+      label={title}
+      error={(dirty && (invalid || incorrect))}
+      description={description}
+      pattern={inputPattern}
       type={inputType}
-      focused={autoFocus}
+      inputMode={inputMode}
+      autoFocus={autoFocus}
       autoComplete={autoComplete}
       value={loading ? LOADING_LABEL : String(value || "")}
       placeholder={placeholder}
+      {...icons(
+        object,
+        payload,
+        li,
+        ti,
+        lic,
+        tic,
+        leadingIconTabIndex,
+        trailingIconTabIndex,
+        loading,
+        disabled,
+        !!readonly,
+        (value || "").toString(),
+        onChange,
+        handleChange,
+        lir,
+        tir
+      )}
       onChange={({ target }) => {
         let result = target.value;
         if (template) {
@@ -373,7 +352,6 @@ export const Text = ({
         }
         onChange(result);
       }}
-      label={title}
       disabled={disabled}
       {...multiline(rows)}
     />

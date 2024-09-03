@@ -1,7 +1,7 @@
 {
   "name": "react-declarative-mantine",
-  "version": "0.0.62",
-  "description": "The Mantine ui kit bindings ",
+  "version": "0.0.2",
+  "description": "The Mantine ui kit bindings for react-declarative",
   "private": false,
   "author": {
     "name": "Petr Tripolsky",
@@ -15,10 +15,11 @@
   "license": "MIT",
   "homepage": "https://react-declarative-playground.github.io",
   "keywords": [
-    "react-native",
-    "ui-kitten",
-    "ui-kit",
-    "responsive"
+    "react-declarative",
+    "ui kit",
+    "bindings",
+    "react",
+    "declarative"
   ],
   "repository": {
     "type": "git",
@@ -42,6 +43,7 @@
     "node": ">=10"
   },
   "scripts": {
+    "start": "npm run build && cd demo && npm install && npm start",
     "build": "rimraf dist && rollup -c && npm run typedef",
     "build:docker": "docker-compose up",
     "typedef": "node ./scripts/dts.js",
@@ -80,7 +82,7 @@
     "rollup": "2.79.1",
     "rollup-plugin-peer-deps-external": "2.2.4",
     "rollup-plugin-terser": "7.0.2",
-    "typescript": "4.6.2"
+    "typescript": "5.5.4"
   },
   "dependencies": {
     "rimraf": "3.0.2"
