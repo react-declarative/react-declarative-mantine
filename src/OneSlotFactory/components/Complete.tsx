@@ -3,7 +3,6 @@ import { useState, useEffect, useMemo, useRef, useLayoutEffect } from "react";
 
 import Popover from "@mui/material/Popover";
 import IconButton from "@mui/material/IconButton";
-import MatTextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import CircularProgress from "@mui/material/CircularProgress";
 import List from "@mui/material/List";
@@ -11,8 +10,11 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemButton from "@mui/material/ListItemButton";
 
+import { TextInput } from '@mantine/core';
+
 import ClearIcon from "@mui/icons-material/Clear";
 import { FieldType, formatText, ICompleteSlot, queued, useActualCallback, useActualValue, useElementSize, useItemModal, useDebounce, useMediaContext, useOneMenu, useOnePayload, useOneProps, useOneState, VirtualView } from "react-declarative";
+import { MANTINE_CONFIG } from "../../config";
 
 const FETCH_DEBOUNCE = 500;
 const ITEMS_LIMIT = 100;
@@ -71,9 +73,7 @@ export const Complete = ({
   inputType = "text",
   inputMode = "text",
   inputPattern = undefined,
-  labelShrink,
   description = "",
-  outlined = false,
   keepRaw = false,
   title = "",
   placeholder = "",
@@ -271,10 +271,10 @@ export const Complete = ({
           let items =
             typeof tip$.current === "function"
               ? await tip$.current(
-                  value$.current || "",
-                  object$.current,
-                  payload
-                )
+                value$.current || "",
+                object$.current,
+                payload
+              )
               : tip$.current;
           if (Array.isArray(items)) {
             if (!keepRaw && value$.current) {
@@ -373,66 +373,38 @@ export const Complete = ({
   return (
     <>
       <div ref={anchorElRef}>
-        <MatTextField
-          sx={{
-            ...(!outlined && {
-              position: "relative",
-              mt: 1,
-              "& .MuiFormHelperText-root": {
-                position: "absolute",
-                top: "100%",
-              },
-            }),
-          }}
-          fullWidth
-          inputRef={inputElementRef}
-          variant={outlined ? "outlined" : "standard"}
-          value={String(value || "")}
-          helperText={(dirty && (invalid || incorrect)) || description}
-          error={dirty && (invalid !== null || incorrect !== null)}
-          InputProps={{
-            onKeyDown: (e) => {
-              if (handleKeyDown(e.key, () => e.currentTarget.blur())) {
-                e.preventDefault();
-              }
-            },
-            autoComplete,
-            readOnly: readonly,
-            inputMode,
-            autoFocus,
-            endAdornment: (
-              <InputAdornment sx={{ position: "relative" }} position="end">
-                <IconButton
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (!loading && !open && !!value) {
-                      handleChange("");
-                      inputElementRef.current?.setSelectionRange(null, null);
-                    }
-                  }}
-                  disabled={disabled}
-                  edge="end"
-                >
-                  {loading && <CircularProgress color="inherit" size={20} />}
-                  {!loading && !open && !!value && <ClearIcon />}
-                </IconButton>
-              </InputAdornment>
-            ),
-          }}
-          inputProps={{
-            pattern: inputPattern,
-          }}
-          InputLabelProps={
-            labelShrink
-              ? {
-                  shrink: labelShrink,
-                }
-              : undefined
-          }
+        <TextInput
+          {...MANTINE_CONFIG}
+          ref={inputElementRef}
+          label={title}
+          error={(dirty && (invalid || incorrect))}
+          description={description}
+          pattern={inputPattern}
+          readOnly={readonly}
+          rightSection={(
+            <InputAdornment sx={{ position: "relative" }} position="end">
+              <IconButton
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (!loading && !open && !!value) {
+                    handleChange("");
+                    inputElementRef.current?.setSelectionRange(null, null);
+                  }
+                }}
+                disabled={disabled}
+                edge="end"
+              >
+                {loading && <CircularProgress color="inherit" size={20} />}
+                {!loading && !open && !!value && <ClearIcon />}
+              </IconButton>
+            </InputAdornment>
+          )}
           type={inputType}
-          focused={autoFocus}
+          inputMode={inputMode}
+          autoFocus={autoFocus}
           autoComplete={autoComplete}
+          value={String(value || "")}
           placeholder={placeholder}
           onChange={({ target }) => {
             let result = target.value;
@@ -447,7 +419,11 @@ export const Complete = ({
             onChange(result);
           }}
           onClick={handleClick}
-          label={title}
+          onKeyDown={(e) => {
+            if (handleKeyDown(e.key, () => e.currentTarget.blur())) {
+              e.preventDefault();
+            }
+          }}
           disabled={disabled}
         />
       </div>

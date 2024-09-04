@@ -308,6 +308,7 @@ export const Text = ({
         description={description}
         inputMode={inputMode}
         autoFocus={autoFocus}
+        readOnly={readonly}
         autoComplete={autoComplete}
         value={loading ? LOADING_LABEL : String(value || "")}
         placeholder={placeholder}
@@ -350,6 +351,7 @@ export const Text = ({
       inputMode={inputMode}
       autoFocus={autoFocus}
       autoComplete={autoComplete}
+      readOnly={readonly}
       value={loading ? LOADING_LABEL : String(value || "")}
       placeholder={placeholder}
       {...icons(
