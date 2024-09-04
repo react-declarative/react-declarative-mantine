@@ -82,6 +82,7 @@ export const Complete = ({
   tip = () => ["unset"],
   tipSelect,
   autoFocus,
+  outlined,
   onChange,
   fieldReadonly,
   inputFormatterSymbol: symbol = "0",
@@ -374,6 +375,7 @@ export const Complete = ({
       <div ref={anchorElRef}>
         <TextInput
           {...MANTINE_CONFIG}
+          variant={outlined ? "unstyled" : "filled"}
           ref={inputElementRef}
           label={title}
           error={(dirty && (invalid || incorrect))}

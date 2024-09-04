@@ -47,6 +47,7 @@ export const Time = ({
   title = "Text",
   placeholder = datetime.TIME_PLACEHOLDER,
   dirty,
+  outlined,
   inputRef,
   onChange,
   withContextMenu,
@@ -217,6 +218,7 @@ export const Time = ({
     <>
       <TextInput
         {...MANTINE_CONFIG}
+        variant={outlined ? "unstyled" : "filled"}
         ref={(input: HTMLInputElement | null) => {
           inputElementRef.current = input;
           inputRef && inputRef(input);

@@ -219,6 +219,7 @@ export const Text = ({
       replace,
     }),
   dirty,
+  outlined,
   loading,
   autoFocus,
   inputRef,
@@ -345,6 +346,7 @@ export const Text = ({
   return (
     <TextInput
       {...MANTINE_CONFIG}
+      variant={outlined ? "unstyled" : "filled"}
       ref={(input: HTMLInputElement | null) => {
         inputElementRef.current = input;
         inputRef && inputRef(input);

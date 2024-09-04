@@ -60,6 +60,7 @@ export const Choose = ({
   title = "",
   placeholder = "Not chosen",
   dirty,
+  outlined,
   loading: upperLoading,
   inputRef,
   onChange,
@@ -111,6 +112,7 @@ export const Choose = ({
   return (
     <TextInput
       {...MANTINE_CONFIG}
+      variant={outlined ? "unstyled" : "filled"}
       readOnly
       ref={inputRef}
       label={title}

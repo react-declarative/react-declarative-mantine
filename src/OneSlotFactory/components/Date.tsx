@@ -11,6 +11,7 @@ export const Date = ({
   invalid,
   incorrect,
   value,
+  outlined,
   disabled,
   readonly,
   description = "",
@@ -37,6 +38,7 @@ export const Date = ({
   return (
     <DateInput
       {...MANTINE_CONFIG}
+      variant={outlined ? "unstyled" : "filled"}
       label={title}
       ref={inputRef}
       readOnly={readonly}
