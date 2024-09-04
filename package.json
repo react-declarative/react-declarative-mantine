@@ -1,6 +1,6 @@
 {
   "name": "react-declarative-mantine",
-  "version": "0.0.6",
+  "version": "0.0.15",
   "description": "The Mantine ui kit bindings for react-declarative",
   "private": false,
   "author": {
@@ -57,8 +57,9 @@
   ],
   "peerDependencies": {
     "@mantine/core": "*",
-    "@mui/material": "*",
+    "@mantine/dates": "*",
     "@mui/icons-material": "*",
+    "@mui/material": "*",
     "@mui/system": "*",
     "react": "*",
     "react-declarative": "*",
@@ -66,6 +67,7 @@
   },
   "devDependencies": {
     "@mantine/core": "7.12.2",
+    "@mantine/dates": "7.12.2",
     "@rollup/plugin-typescript": "11.1.6",
     "@types/react": "18.0.21",
     "@typescript-eslint/eslint-plugin": "6.5.0",

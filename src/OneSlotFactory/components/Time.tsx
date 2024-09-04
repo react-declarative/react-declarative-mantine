@@ -3,12 +3,12 @@ import { useState, useEffect, useRef, useMemo, useLayoutEffect } from "react";
 import dayjs from "dayjs";
 
 import Popover from "@mui/material/Popover";
-import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
 
 import AlarmIcon from "@mui/icons-material/AlarmOutlined";
-import { datetime, formatText, ITimeSlot, TimePicker, useActualValue, useOneMenu } from "react-declarative";
+import { TextInput } from "@mantine/core";
+import { MANTINE_CONFIG } from "../../config";
+import { datetime, ITimeSlot, useOneMenu, useActualValue, formatText, TimePicker } from "react-declarative";
 
 const TIME_TEMPLATE = "##:##";
 const NEVER_POS = Symbol("never-pos");
@@ -44,12 +44,9 @@ export const Time = ({
   disabled,
   readonly,
   description = "",
-  outlined = false,
   title = "Text",
-  labelShrink,
   placeholder = datetime.TIME_PLACEHOLDER,
   dirty,
-  autoFocus,
   inputRef,
   onChange,
   withContextMenu,
@@ -218,48 +215,30 @@ export const Time = ({
 
   return (
     <>
-      <TextField
-        sx={{
-          ...(!outlined && {
-            position: "relative",
-            mt: 1,
-            "& .MuiFormHelperText-root": {
-              position: "absolute",
-              top: "100%",
-            },
-          }),
-        }}
-        inputRef={(input: HTMLInputElement | null) => {
+      <TextInput
+        {...MANTINE_CONFIG}
+        ref={(input: HTMLInputElement | null) => {
           inputElementRef.current = input;
           inputRef && inputRef(input);
         }}
         type="text"
-        InputProps={{
-          readOnly: readonly,
-          autoFocus,
-          endAdornment: (
-            <InputAdornment sx={{ position: "relative" }} position="end">
-              <IconButton onClick={handleClick} disabled={disabled} edge="end">
-                <AlarmIcon />
-              </IconButton>
-            </InputAdornment>
-          ),
+        readOnly={readonly}
+        rightSection={(
+          <IconButton onClick={handleClick} disabled={disabled}>
+            <AlarmIcon />
+          </IconButton>
+        )}
+        rightSectionProps={{
+          style: {
+            width: 'auto',
+          }
         }}
-        InputLabelProps={
-          labelShrink
-            ? {
-                shrink: labelShrink,
-              }
-            : undefined
-        }
         disabled={disabled}
-        focused={autoFocus}
         placeholder={placeholder}
-        variant={outlined ? "outlined" : "standard"}
         value={value}
         label={title}
-        helperText={(dirty && (invalid || incorrect)) || description}
-        error={dirty && (invalid !== null || incorrect !== null)}
+        error={(dirty && (invalid || incorrect))}
+        description={description}
         onChange={({ target }) => handleChange(target.value)}
       />
       <Popover
