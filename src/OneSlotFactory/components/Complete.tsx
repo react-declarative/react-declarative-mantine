@@ -3,7 +3,6 @@ import { useState, useEffect, useMemo, useRef, useLayoutEffect } from "react";
 
 import Popover from "@mui/material/Popover";
 import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
 import CircularProgress from "@mui/material/CircularProgress";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
@@ -382,24 +381,26 @@ export const Complete = ({
           pattern={inputPattern}
           readOnly={readonly}
           rightSection={(
-            <InputAdornment sx={{ position: "relative" }} position="end">
-              <IconButton
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  if (!loading && !open && !!value) {
-                    handleChange("");
-                    inputElementRef.current?.setSelectionRange(null, null);
-                  }
-                }}
-                disabled={disabled}
-                edge="end"
-              >
-                {loading && <CircularProgress color="inherit" size={20} />}
-                {!loading && !open && !!value && <ClearIcon />}
-              </IconButton>
-            </InputAdornment>
+            <IconButton
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!loading && !open && !!value) {
+                  handleChange("");
+                  inputElementRef.current?.setSelectionRange(null, null);
+                }
+              }}
+              disabled={disabled}
+            >
+              {loading && <CircularProgress color="inherit" size={20} />}
+              {!loading && !open && !!value && <ClearIcon />}
+            </IconButton>
           )}
+          rightSectionProps={{
+            style: {
+              width: 'auto',
+            }
+          }}
           type={inputType}
           inputMode={inputMode}
           autoFocus={autoFocus}

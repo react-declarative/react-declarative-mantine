@@ -2,7 +2,6 @@ import * as React from 'react';
 import { useMemo, useRef, useLayoutEffect, createElement } from "react";
 
 import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { Textarea, TextInput } from '@mantine/core';
@@ -55,82 +54,89 @@ const icons = (
   ...(leadingIcon
     ? {
       leftSection: (
-        <InputAdornment sx={{ position: "relative" }} position="start">
-          <IconButton
-            edge="start"
-            disabled={disabled}
-            disableRipple={!leadingIconRipple}
-            tabIndex={leadingIconTabIndex}
-            onClick={() => {
-              if (leadingIconClick) {
-                leadingIconClick(
-                  v as unknown as any,
-                  data,
-                  payload,
-                  (v) =>
-                    c(v, {
-                      skipReadonly: true,
-                    }),
-                  cc
-                );
-              }
-            }}
-          >
-            {createElement(leadingIcon, {
-              data,
-              payload,
-              disabled,
-              readonly,
-            })}
-          </IconButton>
-        </InputAdornment>
+        <IconButton
+          disabled={disabled}
+          disableRipple={!leadingIconRipple}
+          tabIndex={leadingIconTabIndex}
+          onClick={() => {
+            if (leadingIconClick) {
+              leadingIconClick(
+                v as unknown as any,
+                data,
+                payload,
+                (v) =>
+                  c(v, {
+                    skipReadonly: true,
+                  }),
+                cc
+              );
+            }
+          }}
+        >
+          {createElement(leadingIcon, {
+            data,
+            payload,
+            disabled,
+            readonly,
+          })}
+        </IconButton>
       ),
+      leftSectionProps: {
+        style: {
+          width: 'auto',
+        }
+      },
     }
     : {}),
   ...(trailingIcon && !loading
     ? {
       rightSection: (
-        <InputAdornment sx={{ position: "relative" }} position="end">
-          <IconButton
-            edge="end"
-            disabled={disabled}
-            disableRipple={!trailingIconRipple}
-            tabIndex={trailingIconTabIndex}
-            onClick={() => {
-              if (trailingIconClick) {
-                trailingIconClick(
-                  v as unknown as any,
-                  data,
-                  payload,
-                  (v) =>
-                    c(v, {
-                      skipReadonly: true,
-                    }),
-                  cc
-                );
-              }
-            }}
-          >
-            {createElement(trailingIcon, {
-              data,
-              payload,
-              disabled,
-              readonly,
-            })}
-          </IconButton>
-        </InputAdornment>
+        <IconButton
+          disabled={disabled}
+          disableRipple={!trailingIconRipple}
+          tabIndex={trailingIconTabIndex}
+          onClick={() => {
+            if (trailingIconClick) {
+              trailingIconClick(
+                v as unknown as any,
+                data,
+                payload,
+                (v) =>
+                  c(v, {
+                    skipReadonly: true,
+                  }),
+                cc
+              );
+            }
+          }}
+        >
+          {createElement(trailingIcon, {
+            data,
+            payload,
+            disabled,
+            readonly,
+          })}
+        </IconButton>
       ),
+      rightSectionProps: {
+        style: {
+          width: 'auto',
+        }
+      }
     }
     : {}),
   ...(loading
     ? {
       rightSection: (
-        <InputAdornment sx={{ position: "relative" }} position="end">
-          <IconButton disabled={disabled} edge="end">
-            <CircularProgress color="inherit" size={20} />
-          </IconButton>
-        </InputAdornment>
+        <IconButton disabled={disabled}>
+          <CircularProgress color="inherit" size={20} />
+        </IconButton>
       ),
+      rightSectionProps: {
+        style: {
+          width: 'auto',
+        }
+      }
     }
     : {}),
 });
