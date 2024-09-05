@@ -13,6 +13,8 @@ export const Switch = ({
   return (
     <UiSwitch
       size="md"
+      mt="xs"
+      mb="xs"
       checked={Boolean(value)}
       disabled={disabled}
       onChange={() => onChange(!value)}

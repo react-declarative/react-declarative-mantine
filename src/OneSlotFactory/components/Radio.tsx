@@ -40,6 +40,8 @@ export const Radio = ({
     return (
         <UiRadio
             size="md"
+            mt="xs"
+            mb="xs"
             checked={checked}
             disabled={disabled}
             onChange={() => handleChange(radioValue || null)}

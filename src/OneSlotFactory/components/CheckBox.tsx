@@ -12,6 +12,8 @@ export const CheckBox = ({
 }: ICheckBoxSlot) => (
     <UiCheckBox
         size="md"
+        mt="xs"
+        mb="xs"
         disabled={disabled}
         checked={Boolean(value)}
         onChange={() => onChange(!value)}
