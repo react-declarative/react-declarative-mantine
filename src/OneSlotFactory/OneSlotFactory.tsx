@@ -11,6 +11,7 @@ import Complete from './components/Complete';
 import Date from './components/Date';
 import Tree from './components/Tree';
 import Time from './components/Time';
+import ComboArray from './components/ComboArray';
 
 interface IOneSlotFactoryProps {
     children: React.ReactNode;
@@ -19,6 +20,7 @@ interface IOneSlotFactoryProps {
 export const defaultSlots = {
     Choose,
     Combo,
+    ComboArray,
     Complete,
     Date,
     Items,
