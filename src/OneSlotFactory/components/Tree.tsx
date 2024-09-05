@@ -214,6 +214,9 @@ export const Tree = ({
       description={description}
       placeholder={placeholder}
       data={data}
+      style={{
+        opacity: disabled ? 0.5 : undefined,
+      }}
       comboboxProps={{
         withinPortal: true,
         shadow: 'xl',

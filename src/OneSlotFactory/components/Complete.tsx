@@ -382,6 +382,9 @@ export const Complete = ({
           description={description}
           pattern={inputPattern}
           readOnly={readonly}
+          style={{
+            opacity: disabled ? 0.5 : undefined,
+          }}
           rightSection={(
             <IconButton
               onClick={(e) => {

@@ -15,6 +15,9 @@ export const Switch = ({
       size="md"
       mt="xs"
       mb="xs"
+      style={{
+        opacity: disabled ? 0.5 : undefined,
+      }}
       checked={Boolean(value)}
       disabled={disabled}
       onChange={() => onChange(!value)}

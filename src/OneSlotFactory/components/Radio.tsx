@@ -43,6 +43,9 @@ export const Radio = ({
             mt="xs"
             mb="xs"
             checked={checked}
+            style={{
+                opacity: disabled ? 0.5 : undefined,
+            }}
             disabled={disabled}
             onChange={() => handleChange(radioValue || null)}
             label={title}

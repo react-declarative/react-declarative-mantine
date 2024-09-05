@@ -318,6 +318,9 @@ export const Text = ({
         autoFocus={autoFocus}
         readOnly={readonly}
         autoComplete={autoComplete}
+        style={{
+          opacity: disabled ? 0.5 : undefined,
+        }}
         value={loading ? LOADING_LABEL : String(value || "")}
         placeholder={placeholder}
         {...icons(
@@ -351,6 +354,9 @@ export const Text = ({
       ref={(input: HTMLInputElement | null) => {
         inputElementRef.current = input;
         inputRef && inputRef(input);
+      }}
+      style={{
+        opacity: disabled ? 0.5 : undefined,
       }}
       label={title}
       error={(dirty && (invalid || incorrect))}

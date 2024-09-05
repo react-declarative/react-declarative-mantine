@@ -118,6 +118,9 @@ export const Choose = ({
       label={title}
       error={(dirty && (invalid || incorrect))}
       description={description}
+      style={{
+        opacity: disabled ? 0.5 : undefined,
+      }}
       rightSection={(
         <ActionButton
           sx={{

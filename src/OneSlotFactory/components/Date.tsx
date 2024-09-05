@@ -51,6 +51,9 @@ export const Date = ({
       description={description}
       value={dateValue}
       placeholder={placeholder}
+      style={{
+        opacity: disabled ? 0.5 : undefined,
+      }}
       popoverProps={{
         withinPortal: true,
         shadow: 'xl',

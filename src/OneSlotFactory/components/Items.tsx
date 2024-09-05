@@ -204,6 +204,9 @@ export const Items = ({
             error={(dirty && (invalid || incorrect))}
             description={description}
             placeholder={placeholder}
+            style={{
+                opacity: disabled ? 0.5 : undefined,
+            }}
             data={data}
             comboboxProps={{
                 withinPortal: true,

@@ -15,6 +15,9 @@ export const CheckBox = ({
         mt="xs"
         mb="xs"
         disabled={disabled}
+        style={{
+            opacity: disabled ? 0.5 : undefined,
+        }}
         checked={Boolean(value)}
         onChange={() => onChange(!value)}
         label={title}

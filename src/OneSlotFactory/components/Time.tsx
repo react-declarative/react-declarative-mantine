@@ -235,6 +235,9 @@ export const Time = ({
             width: 'auto',
           }
         }}
+        style={{
+          opacity: disabled ? 0.5 : undefined,
+        }}
         disabled={disabled}
         placeholder={placeholder}
         value={value}

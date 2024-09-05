@@ -191,6 +191,9 @@ export const Combo = ({
     <Select
       {...MANTINE_CONFIG}
       value={value}
+      style={{
+        opacity: disabled ? 0.5 : undefined,
+      }}
       allowDeselect={!noDeselect}
       variant={outlined ? "default" : "filled"}
       onChange={handleChange}
