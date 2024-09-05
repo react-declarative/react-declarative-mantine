@@ -50,7 +50,7 @@ export const Date = ({
       error={(dirty && (invalid || incorrect))}
       description={description}
       value={dateValue}
-      placeholder={DEFAULT_PLACEHOLDER}
+      placeholder={placeholder}
       popoverProps={{
         withinPortal: true,
         zIndex: MANTINE_POPOVER_ZINDEX,
