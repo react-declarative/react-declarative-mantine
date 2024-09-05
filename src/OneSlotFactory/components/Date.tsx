@@ -7,6 +7,8 @@ import { DateInput } from "@mantine/dates";
 import { datetime, IDateSlot } from "react-declarative";
 import { MANTINE_CONFIG, MANTINE_POPOVER_ZINDEX } from "../../config";
 
+const DEFAULT_PLACEHOLDER = "DD/MM/YYYY";
+
 export const Date = ({
   invalid,
   incorrect,
@@ -15,6 +17,7 @@ export const Date = ({
   disabled,
   readonly,
   description = "",
+  placeholder = DEFAULT_PLACEHOLDER,
   title = "Text",
   dirty,
   inputRef,
@@ -47,6 +50,7 @@ export const Date = ({
       error={(dirty && (invalid || incorrect))}
       description={description}
       value={dateValue}
+      placeholder={DEFAULT_PLACEHOLDER}
       popoverProps={{
         withinPortal: true,
         zIndex: MANTINE_POPOVER_ZINDEX,
