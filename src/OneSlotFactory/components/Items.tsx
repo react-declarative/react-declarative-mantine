@@ -170,7 +170,7 @@ export const Items = ({
 
     const data = useMemo(() => state.options.map((value) => ({
         value,
-        label: state.labels[value],
+        label: state.labels[value] || value,
     })), [state]);
 
     if (loading || !initComplete.current) {

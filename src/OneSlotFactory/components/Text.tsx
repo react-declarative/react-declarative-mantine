@@ -310,6 +310,7 @@ export const Text = ({
         }}
         label={title}
         error={(dirty && (invalid || incorrect))}
+        autosize
         minRows={inputRows}
         maxRows={inputRows}
         description={description}

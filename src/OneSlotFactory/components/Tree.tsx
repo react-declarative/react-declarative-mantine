@@ -179,7 +179,7 @@ export const Tree = ({
 
   const data = useMemo(() => state.options.map((value) => ({
     value,
-    label: state.labels[value],
+    label: state.labels[value] || value,
   })), [state]);
 
   if (loading || upperLoading || !initComplete.current) {
