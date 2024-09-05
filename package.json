@@ -1,6 +1,6 @@
 {
   "name": "react-declarative-mantine",
-  "version": "0.0.28",
+  "version": "0.0.29",
   "description": "The Mantine ui kit bindings for react-declarative",
   "private": false,
   "author": {

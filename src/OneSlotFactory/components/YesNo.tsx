@@ -113,7 +113,7 @@ export const YesNoField = ({
     return (
       <Select
         {...MANTINE_CONFIG}
-        variant={outlined ? "unstyled" : "filled"}
+        variant={outlined ? "default" : "filled"}
         disabled
         label={title}
         error={(dirty && (invalid || incorrect))}
@@ -133,7 +133,7 @@ export const YesNoField = ({
       {...MANTINE_CONFIG}
       value={value}
       allowDeselect={!noDeselect}
-      variant={outlined ? "unstyled" : "filled"}
+      variant={outlined ? "default" : "filled"}
       onChange={handleChange}
       label={title}
       disabled={disabled}

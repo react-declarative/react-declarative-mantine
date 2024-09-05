@@ -112,7 +112,7 @@ export const Choose = ({
   return (
     <TextInput
       {...MANTINE_CONFIG}
-      variant={outlined ? "unstyled" : "filled"}
+      variant={outlined ? "default" : "filled"}
       readOnly
       ref={inputRef}
       label={title}

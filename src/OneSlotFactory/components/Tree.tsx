@@ -186,7 +186,7 @@ export const Tree = ({
     return (
       <MultiSelect
         {...MANTINE_CONFIG}
-        variant={outlined ? "unstyled" : "filled"}
+        variant={outlined ? "default" : "filled"}
         disabled
         label={title}
         error={(dirty && (invalid || incorrect))}
@@ -205,7 +205,7 @@ export const Tree = ({
     <MultiSelect
       {...MANTINE_CONFIG}
       value={value}
-      variant={outlined ? "unstyled" : "filled"}
+      variant={outlined ? "default" : "filled"}
       onChange={handleChange}
       label={title}
       disabled={disabled}

@@ -41,7 +41,7 @@ export const Date = ({
   return (
     <DateInput
       {...MANTINE_CONFIG}
-      variant={outlined ? "unstyled" : "filled"}
+      variant={outlined ? "default" : "filled"}
       label={title}
       ref={inputRef}
       readOnly={readonly}

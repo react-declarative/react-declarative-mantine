@@ -375,7 +375,7 @@ export const Complete = ({
       <div ref={anchorElRef}>
         <TextInput
           {...MANTINE_CONFIG}
-          variant={outlined ? "unstyled" : "filled"}
+          variant={outlined ? "default" : "filled"}
           ref={inputElementRef}
           label={title}
           error={(dirty && (invalid || incorrect))}

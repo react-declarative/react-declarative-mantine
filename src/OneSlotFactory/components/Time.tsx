@@ -218,7 +218,7 @@ export const Time = ({
     <>
       <TextInput
         {...MANTINE_CONFIG}
-        variant={outlined ? "unstyled" : "filled"}
+        variant={outlined ? "default" : "filled"}
         ref={(input: HTMLInputElement | null) => {
           inputElementRef.current = input;
           inputRef && inputRef(input);
