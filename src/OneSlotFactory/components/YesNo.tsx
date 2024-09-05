@@ -146,7 +146,7 @@ export const YesNoField = ({
         zIndex: MANTINE_POPOVER_ZINDEX,
       }}
     />
-  )
+  );
 };
 
 export default YesNoField;

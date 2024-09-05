@@ -1,25 +1,11 @@
 import * as React from "react";
 import { useMemo, useState, useRef, useEffect } from "react";
 
-import {
-  AutocompleteRenderInputParams,
-  AutocompleteRenderOptionState,
-} from "@mui/material/Autocomplete";
+import { IComboSlot, useAsyncAction, useOnePayload, useOneProps, useOneState, useRenderWaiter } from "react-declarative";
+import { MANTINE_CONFIG, MANTINE_POPOVER_ZINDEX } from "../../config";
+import { Select } from "@mantine/core";
 
-import CircularProgress from "@mui/material/CircularProgress";
-import Autocomplete from "@mui/material/Autocomplete";
-import MatTextField from "@mui/material/TextField";
-import Radio from "@mui/material/Radio";
-
-import RadioIcon from "@mui/icons-material/RadioButtonChecked";
-import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
-import { debounce, FieldType, IComboSlot, useActualValue, useAsyncAction, useItemModal, useMediaContext, useOneMenu, useOnePayload, useOneProps, useOneState, useReloadTrigger, useRenderWaiter, useSubject, VirtualListBox } from "react-declarative";
-
-const icon = <RadioButtonUncheckedIcon fontSize="small" />;
-const checkedIcon = <RadioIcon fontSize="small" />;
-
-const EMPTY_ARRAY = [] as any;
-const MOUSE_OUT_DEBOUNCE = 45;
+const LOADING_LABEL = "Loading";
 
 /**
  * Returns a hash string generated from the values in an array.
@@ -73,39 +59,27 @@ export const Combo = ({
   placeholder = "",
   outlined = false,
   itemList = [],
-  virtualListBox,
   watchItemList,
-  labelShrink,
   noDeselect,
   freeSolo,
   title = "",
   dirty,
   invalid,
   incorrect,
-  fieldReadonly,
-  withContextMenu,
   tr = (s) => s.toString(),
   onChange,
 }: IComboSlot) => {
-  const { isMobile } = useMediaContext();
   const { object } = useOneState();
   const payload = useOnePayload();
-  const { requestSubject } = useOneMenu();
-
-  const { reloadTrigger, doReload } = useReloadTrigger();
 
   const [state, setState] = useState<IState>(() => ({
     options: [],
     labels: {},
   }));
 
-  const [opened, setOpened] = useState(false);
-
   const initComplete = useRef(false);
 
   const waitForRender = useRenderWaiter([state], 10);
-
-  const labels$ = useActualValue(state.labels);
 
   /**
    * Returns a memoized value based on the given `upperValue`.
@@ -120,24 +94,6 @@ export const Combo = ({
     }
     return upperValue;
   }, [upperValue]);
-
-  const arrayValue = useMemo(() => {
-    return value ? [value] : value;
-  }, [value]);
-
-  const pickModal = useItemModal({
-    data: object,
-    payload,
-    itemList,
-    keepRaw: false,
-    onValueChange: onChange,
-    placeholder,
-    tip: undefined,
-    title,
-    tr,
-    type: FieldType.Combo,
-    value: arrayValue,
-  });
 
   const { fallback } = useOneProps();
 
@@ -196,123 +152,6 @@ export const Combo = ({
   }, [valueHash, disabled, dirty, invalid, incorrect, object, readonly]);
 
   /**
-   * Creates a render input function for an Autocomplete component.
-   *
-   * @param loading - Indicates if the Autocomplete is in a loading state.
-   * @param readonly - Indicates if the Autocomplete is in a readonly state.
-   * @returns A render input function for the Autocomplete component.
-   * @param params - The Autocomplete render input parameters.
-   * @returns The rendered input element.
-   */
-  const createRenderInput =
-    (loading: boolean, readonly: boolean) =>
-    (params: AutocompleteRenderInputParams) =>
-      (
-        <MatTextField
-          {...params}
-          sx={{
-            ...(!outlined && {
-              position: "relative",
-              mt: 1,
-              "& .MuiFormHelperText-root": {
-                position: "absolute",
-                top: "100%",
-              },
-            }),
-          }}
-          variant={outlined ? "outlined" : "standard"}
-          placeholder={loading ? undefined : placeholder}
-          label={title}
-          helperText={(dirty && (invalid || incorrect)) || description}
-          error={dirty && (invalid !== null || incorrect !== null)}
-          InputProps={{
-            ...params.InputProps,
-            readOnly: readonly,
-            endAdornment: (
-              <>
-                {loading ? (
-                  <CircularProgress color="inherit" size={20} />
-                ) : null}
-                {params.InputProps.endAdornment}
-              </>
-            ),
-          }}
-          InputLabelProps={{
-            ...params.InputLabelProps,
-            ...(labelShrink && { shrink: true }),
-          }}
-        />
-      );
-
-  /**
-   * Renders an option for the Autocomplete component.
-   *
-   * @param props - The HTML attributes for the <li> element.
-   * @param option - The option to render.
-   * @param state - The state of the render option.
-   * @returns - The rendered option.
-   */
-  const renderOption = (
-    props: React.HTMLAttributes<HTMLLIElement>,
-    option: any,
-    state: AutocompleteRenderOptionState
-  ) => {
-    const { current: labels } = labels$;
-    return (
-      <li {...props}>
-        <Radio
-          icon={icon}
-          checkedIcon={checkedIcon}
-          style={{ marginRight: 8 }}
-          checked={state.selected}
-        />
-        {freeSolo ? option : labels[option] || `${option} (unknown)`}
-      </li>
-    );
-  };
-
-  /**
-   * Retrieves the label for a given value.
-   *
-   * @param v - The value for which to retrieve the label.
-   * @returns The label corresponding to the given value.
-   */
-  const getOptionLabel = (v: string) => {
-    const { current: labels } = labels$;
-    if (freeSolo) {
-      return v;
-    }
-    return labels[v] || `${v} (unknown)`;
-  };
-
-  const changeSubject = useSubject<void>();
-
-  useEffect(() => {
-    if (!opened) {
-      return;
-    }
-    let unsubscribeRef = changeSubject.once(() => {
-      const handler = debounce(({ clientX, clientY }: MouseEvent) => {
-        const target = document.elementFromPoint(clientX, clientY);
-        if (!target?.closest(".MuiAutocomplete-popper")) {
-          setOpened(false);
-          doReload();
-        }
-      }, MOUSE_OUT_DEBOUNCE);
-      document.addEventListener("mousemove", handler);
-      unsubscribeRef = () => {
-        document.removeEventListener("mousemove", handler);
-        handler.clear();
-      };
-    });
-    return () => unsubscribeRef();
-  }, [opened]);
-
-  useEffect(() => withContextMenu && requestSubject.subscribe(() => {
-    setOpened(false);
-  }), []);
-
-  /**
    * Handles the change of a value and triggers the corresponding
    * callback and event.
    *
@@ -321,55 +160,50 @@ export const Combo = ({
    */
   const handleChange = (value: any) => {
     onChange(value || null);
-    changeSubject.next();
   };
+
+  const data = useMemo(() => state.options.map((value) => ({
+    value,
+    label: state.labels[value],
+  })), [state]);
+
 
   if (loading || !initComplete.current) {
     return (
-      <Autocomplete
-        disableCloseOnSelect
-        disableClearable={noDeselect}
+      <Select
+        {...MANTINE_CONFIG}
+        variant={outlined ? "unstyled" : "filled"}
         disabled
-        loading
-        value={null}
-        options={EMPTY_ARRAY}
-        onChange={() => null}
-        freeSolo={freeSolo}
-        ListboxComponent={virtualListBox ? VirtualListBox : undefined}
-        getOptionLabel={getOptionLabel}
-        renderInput={createRenderInput(true, true)}
-        renderOption={renderOption}
+        label={title}
+        error={(dirty && (invalid || incorrect))}
+        description={description}
+        placeholder={LOADING_LABEL}
+        comboboxProps={{
+          withinPortal: false,
+          zIndex: MANTINE_POPOVER_ZINDEX,
+        }}
       />
     );
   }
 
   return (
-    <Autocomplete
-      key={reloadTrigger}
-      onOpen={() => {
-        if (fieldReadonly) {
-          return;
-        }
-        if (!isMobile) {
-          setOpened(true);
-          return;
-        }
-        pickModal();
-      }}
-      onClose={() => setOpened(false)}
-      disableCloseOnSelect
-      disableClearable={noDeselect}
-      loading={loading}
-      value={value || null}
-      onChange={({}, v) => handleChange(v)}
-      getOptionLabel={getOptionLabel}
-      freeSolo={freeSolo}
-      options={state.options}
+    <Select
+      {...MANTINE_CONFIG}
+      value={value}
+      allowDeselect={!noDeselect}
+      variant={outlined ? "unstyled" : "filled"}
+      onChange={handleChange}
+      label={title}
       disabled={disabled}
       readOnly={readonly}
-      ListboxComponent={virtualListBox ? VirtualListBox : undefined}
-      renderInput={createRenderInput(false, readonly)}
-      renderOption={renderOption}
+      error={(dirty && (invalid || incorrect))}
+      description={description}
+      placeholder={placeholder}
+      data={data}
+      comboboxProps={{
+        withinPortal: true,
+        zIndex: MANTINE_POPOVER_ZINDEX,
+      }}
     />
   );
 };
