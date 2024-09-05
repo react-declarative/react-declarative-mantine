@@ -12,6 +12,9 @@ import Date from './components/Date';
 import Tree from './components/Tree';
 import Time from './components/Time';
 import ComboArray from './components/ComboArray';
+import Switch from './components/Switch';
+import Radio from './components/Radio';
+import CheckBox from './components/CheckBox';
 
 interface IOneSlotFactoryProps {
     children: React.ReactNode;
@@ -28,6 +31,9 @@ export const defaultSlots = {
     Time,
     Tree,
     YesNo,
+    Switch,
+    Radio,
+    CheckBox,
 };
 
 export const OneSlotFactory = ({
