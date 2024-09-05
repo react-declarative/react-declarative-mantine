@@ -48,6 +48,7 @@ export const Date = ({
       description={description}
       value={dateValue}
       popoverProps={{
+        withinPortal: true,
         zIndex: MANTINE_POPOVER_ZINDEX,
       }}
       onChange={(value: Date | null) => {

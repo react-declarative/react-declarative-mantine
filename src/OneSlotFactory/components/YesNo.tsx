@@ -1,24 +1,11 @@
 import * as React from "react";
 import { useMemo, useState, useEffect, useRef } from "react";
 
-import {
-  AutocompleteRenderInputParams,
-  AutocompleteRenderOptionState,
-} from "@mui/material/Autocomplete";
+import { IYesNoSlot, useOnePayload, useOneState, useOneProps, useAsyncAction } from "react-declarative";
+import { Select } from "@mantine/core";
+import { MANTINE_CONFIG, MANTINE_POPOVER_ZINDEX } from "../../config";
 
-import CircularProgress from "@mui/material/CircularProgress";
-import Autocomplete from "@mui/material/Autocomplete";
-import MatTextField from "@mui/material/TextField";
-import Radio from "@mui/material/Radio";
-
-import RadioIcon from "@mui/icons-material/RadioButtonChecked";
-import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
-import { IYesNoSlot, useReloadTrigger, useActualValue, useOnePayload, useOneState, useOneProps, useAsyncAction, useSubject, debounce, VirtualListBox } from "react-declarative";
-
-const icon = <RadioButtonUncheckedIcon fontSize="small" />;
-const checkedIcon = <RadioIcon fontSize="small" />;
-
-const MOUSE_OUT_DEBOUNCE = 45;
+const LOADING_LABEL = "Loading";
 
 const OPTIONS = [
   "Yes",
@@ -50,25 +37,18 @@ export const YesNoField = ({
   readonly,
   description = "",
   placeholder = "",
-  outlined = false,
-  virtualListBox,
-  labelShrink,
   noDeselect,
   title = "",
   tr = (v) => v,
+  outlined,
   dirty,
   invalid,
   incorrect,
   onChange,
 }: IYesNoSlot) => {
-  const { reloadTrigger, doReload } = useReloadTrigger();
-
-  const [labels, setLabels] = useState({});
-  const [opened, setOpened] = useState(false);
+  const [labels, setLabels] = useState<Record<string, string>>({});
 
   const initComplete = useRef(false);
-
-  const labels$ = useActualValue(labels);
 
   const payload = useOnePayload();
   const { object } = useOneState();
@@ -116,162 +96,57 @@ export const YesNoField = ({
   }, []);
 
   /**
-   * Retrieves the label associated with a given value.
-   *
-   * @param v - The value for which to retrieve the label.
-   * @returns - The label associated with the given value, or the value itself if no label is found.
-   */
-  const getOptionLabel = (v: string) => {
-    const { current: labels } = labels$;
-    return (labels as any)[v] || v;
-  };
-
-  /**
-   * Generates a render input function for an autocomplete component.
-   *
-   * @param loading - Indicates if the autocomplete is loading.
-   * @param readonly - Indicates if the autocomplete is in readonly mode.
-   * @returns - A render input function.
-   *
-   * @param params - Render input parameters.
-   * @returns - The rendered input component.
-   */
-  const createRenderInput =
-    (loading: boolean, readonly: boolean) =>
-    (params: AutocompleteRenderInputParams) =>
-      (
-        <MatTextField
-          {...params}
-          sx={{
-            ...(!outlined && {
-              position: "relative",
-              mt: 1,
-              "& .MuiFormHelperText-root": {
-                position: "absolute",
-                top: "100%",
-              },
-            }),
-          }}
-          variant={outlined ? "outlined" : "standard"}
-          placeholder={loading ? undefined : placeholder}
-          label={title}
-          helperText={(dirty && (invalid || incorrect)) || description}
-          error={dirty && (invalid !== null || incorrect !== null)}
-          InputProps={{
-            ...params.InputProps,
-            readOnly: readonly,
-            endAdornment: (
-              <>
-                {loading ? (
-                  <CircularProgress color="inherit" size={20} />
-                ) : null}
-                {params.InputProps.endAdornment}
-              </>
-            ),
-          }}
-          InputLabelProps={{
-            ...params.InputLabelProps,
-            ...(labelShrink && { shrink: true }),
-          }}
-        />
-      );
-
-  /**
-   * Renders an option for the Autocomplete component.
-   *
-   * @param props - The props to be applied to the li element.
-   * @param option - The option object to be rendered.
-   * @param state - The state of the render option.
-   * @returns - The rendered li element.
-   */
-  const renderOption = (
-    props: React.HTMLAttributes<HTMLLIElement>,
-    option: any,
-    state: AutocompleteRenderOptionState
-  ) => {
-    const { current: labels } = labels$;
-    return (
-      <li {...props}>
-        <Radio
-          icon={icon}
-          checkedIcon={checkedIcon}
-          style={{ marginRight: 8 }}
-          checked={state.selected}
-        />
-        {(labels as any)[option] || option}
-      </li>
-    );
-  };
-
-  const changeSubject = useSubject<void>();
-
-  useEffect(() => {
-    if (!opened) {
-      return;
-    }
-    let unsubscribeRef = changeSubject.once(() => {
-      const handler = debounce(({ clientX, clientY }: MouseEvent) => {
-        const target = document.elementFromPoint(clientX, clientY);
-        if (!target?.closest(".MuiAutocomplete-popper")) {
-          setOpened(false);
-          doReload();
-        }
-      }, MOUSE_OUT_DEBOUNCE);
-      document.addEventListener("mousemove", handler);
-      unsubscribeRef = () => {
-        document.removeEventListener("mousemove", handler);
-        handler.clear();
-      };
-    });
-    return () => unsubscribeRef();
-  }, [opened]);
-
-  /**
    * Handles the change in value.
    *
    * @param value - The new value.
    */
   const handleChange = (value: any) => {
     onChange(value === "Yes" ? true : value === "No" ? false : null);
-    changeSubject.next();
   };
+
+  const data = useMemo(() => OPTIONS.map((value) => ({
+    value,
+    label: labels[value],
+  })), [labels]);
 
   if (loading || !initComplete.current) {
     return (
-      <Autocomplete
-        disableCloseOnSelect
-        disableClearable={noDeselect}
+      <Select
+        {...MANTINE_CONFIG}
+        variant={outlined ? "unstyled" : "filled"}
         disabled
-        loading
-        value={null}
-        options={OPTIONS}
-        onChange={() => null}
-        ListboxComponent={virtualListBox ? VirtualListBox : undefined}
-        getOptionLabel={getOptionLabel}
-        renderInput={createRenderInput(true, true)}
-        renderOption={renderOption}
+        label={title}
+        error={(dirty && (invalid || incorrect))}
+        description={description}
+        placeholder={LOADING_LABEL}
+        comboboxProps={{
+          withinPortal: false,
+          zIndex: MANTINE_POPOVER_ZINDEX,
+        }}
       />
     );
   }
 
   return (
-    <Autocomplete
-      key={reloadTrigger}
-      onOpen={() => setOpened(true)}
-      onClose={() => setOpened(false)}
-      disableCloseOnSelect
-      disableClearable={noDeselect}
-      value={value || null}
-      onChange={({}, v) => handleChange(v)}
-      options={OPTIONS}
+    <Select
+      {...MANTINE_CONFIG}
+      value={value}
+      allowDeselect={!noDeselect}
+      variant={outlined ? "unstyled" : "filled"}
+      onChange={handleChange}
+      label={title}
       disabled={disabled}
       readOnly={readonly}
-      ListboxComponent={virtualListBox ? VirtualListBox : undefined}
-      getOptionLabel={getOptionLabel}
-      renderInput={createRenderInput(false, readonly)}
-      renderOption={renderOption}
+      error={(dirty && (invalid || incorrect))}
+      description={description}
+      placeholder={placeholder}
+      data={data}
+      comboboxProps={{
+        withinPortal: true,
+        zIndex: MANTINE_POPOVER_ZINDEX,
+      }}
     />
-  );
+  )
 };
 
 export default YesNoField;
