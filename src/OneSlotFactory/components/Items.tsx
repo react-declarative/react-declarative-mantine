@@ -1,25 +1,11 @@
 import * as React from 'react';
 import { useMemo, useState, useRef, useEffect } from 'react';
 
-import { AutocompleteRenderGetTagProps, AutocompleteRenderOptionState } from "@mui/material/Autocomplete";
-import { AutocompleteRenderInputParams } from "@mui/material/Autocomplete";
+import { IItemsSlot, useOneState, useOnePayload, useRenderWaiter, isObject, compareArray, useOneProps, useAsyncAction } from 'react-declarative';
+import { MultiSelect } from '@mantine/core';
+import { MANTINE_CONFIG, MANTINE_POPOVER_ZINDEX } from '../../config';
 
-import Autocomplete from "@mui/material/Autocomplete";
-
-import CircularProgress from "@mui/material/CircularProgress";
-import MatTextField from "@mui/material/TextField";
-import Checkbox from '@mui/material/Checkbox';
-import Chip from "@mui/material/Chip";
-
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import { IItemsSlot, useMediaContext, useOneState, useOnePayload, useOneMenu, useReloadTrigger, useRenderWaiter, useActualValue, isObject, useItemModal, FieldType, compareArray, useOneProps, useAsyncAction, useSubject, debounce, VirtualListBox } from 'react-declarative';
-
-const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
-const checkedIcon = <CheckBoxIcon fontSize="small" />;
-
-const EMPTY_ARRAY = [] as any;
-const MOUSE_OUT_DEBOUNCE = 45;
+const LOADING_LABEL = "Loading";
 
 const getArrayHash = (value: any) =>
     Object.values<string>(value || {})
@@ -63,41 +49,26 @@ export const Items = ({
     outlined = false,
     itemList = [],
     freeSolo,
-    noDeselect,
-    virtualListBox,
     watchItemList,
-    labelShrink,
     dirty,
     invalid,
     incorrect,
     title,
-    fieldReadonly,
     tr = (s) => s.toString(),
     onChange,
-    withContextMenu,
 }: IItemsSlot) => {
-
-    const { isMobile } = useMediaContext();
 
     const { object } = useOneState();
     const payload = useOnePayload();
-
-    const { requestSubject } = useOneMenu();
-
-    const { reloadTrigger, doReload } = useReloadTrigger();
 
     const [state, setState] = useState<IState>(() => ({
         options: [],
         labels: {},
     }));
 
-    const [opened, setOpened] = useState(false);
-
     const initComplete = useRef(false);
 
     const waitForRender = useRenderWaiter([state], 10);
-
-    const labels$ = useActualValue(state.labels);
 
     /**
      * Memoized value casted to array.
@@ -117,20 +88,6 @@ export const Items = ({
         return [];
     }, [upperValue]);
 
-    const pickModal = useItemModal({
-        data: object,
-        payload,
-        itemList,
-        keepRaw: false,
-        onValueChange: onChange,
-        placeholder,
-        tip: undefined,
-        title,
-        tr,
-        type: FieldType.Items,
-        value: arrayValue,
-    });
-
     const prevValue = useRef(arrayValue);
 
     /**
@@ -146,8 +103,6 @@ export const Items = ({
         prevValue.current = arrayValue;
         return arrayValue;
     }, [arrayValue]);
-
-    const value$ = useActualValue(value);
 
     const {
         fallback,
@@ -201,33 +156,6 @@ export const Items = ({
         readonly,
     ]);
 
-    const changeSubject = useSubject<void>();
-
-    useEffect(() => {
-        if (!opened) {
-            return;
-        }
-        let unsubscribeRef = changeSubject.once(() => {
-            const handler = debounce(({ clientX, clientY }: MouseEvent) => {
-                const target = document.elementFromPoint(clientX, clientY);
-                if (!target?.closest('.MuiAutocomplete-popper')) {
-                    setOpened(false);
-                    doReload();
-                }
-            }, MOUSE_OUT_DEBOUNCE);
-            document.addEventListener('mousemove', handler);
-            unsubscribeRef = () => {
-                document.removeEventListener('mousemove', handler);
-                handler.clear();
-            };
-        });
-        return () => unsubscribeRef();
-    }, [opened]);
-
-    useEffect(() => withContextMenu && requestSubject.subscribe(() => {
-        setOpened(false);
-    }), []);
-
     /**
      * Handles a change event by calling the provided onChange function with the value.
      * If the value is an empty string or undefined, null is passed to the onChange function.
@@ -238,158 +166,48 @@ export const Items = ({
      */
     const handleChange = (value: any) => {
         onChange(value?.length ? value : null);
-        changeSubject.next();
     };
 
-    /**
-     * Renders tags based on the given values using the Autocomplete component.
-     *
-     * @param value - An array of values to render as tags.
-     * @param getTagProps - A function that receives an index and returns props for a tag.
-     * @returns An array of Chip components representing the rendered tags.
-     */
-    const renderTags = (value: any[], getTagProps: AutocompleteRenderGetTagProps) => {
-        const { current: labels } = labels$;
-        return value.map((option: string, index: number) => (
-            <Chip
-                variant={outlined ? "outlined" : "filled"}
-                label={freeSolo ? option : (labels[option] || `${option} (unknown)`)}
-                {...getTagProps({ index })}
-            />
-        ))
-    };
-
-    /**
-     * Retrieves the option label based on the provided value.
-     *
-     * @param v - The value for which to retrieve the label.
-     * @returns The label for the given value.
-     */
-    const getOptionLabel = (v: string) => {
-        const { current: labels } = labels$;
-        if (freeSolo) {
-            return v;
-        }
-        return labels[v] || `${v} (unknown)`;
-    };
-
-    /**
-     * Renders an Autocomplete input field with given parameters.
-     *
-     * @param loading - Indicates if the input field is in a loading state.
-     * @param readonly - Indicates if the input field is set to readonly.
-     * @param params - AutocompleteRenderInputParams object containing input parameters.
-     * @returns - JSX element representing the input field.
-     */
-    const createRenderInput = (loading: boolean, readonly: boolean) => (params: AutocompleteRenderInputParams) => (
-        <MatTextField
-            {...params}
-            sx={{
-                ...(!outlined && {
-                    position: 'relative',
-                    mt: 1,
-                    '& .MuiFormHelperText-root': {
-                        position: 'absolute',
-                        top: '100%',
-                    },
-                })
-            }}
-            variant={outlined ? "outlined" : "standard"}
-            label={title}
-            helperText={(dirty && (invalid || incorrect)) || description}
-            placeholder={loading ? undefined : value$.current.length ? undefined : placeholder}
-            error={dirty && (invalid !== null || incorrect !== null)}
-            InputProps={{
-                ...params.InputProps,
-                readOnly: readonly,
-                endAdornment: (
-                    <>
-                        {loading ? <CircularProgress color="inherit" size={20} /> : null}
-                        {params.InputProps.endAdornment}
-                    </>
-                ),
-            }}
-            InputLabelProps={{
-                ...params.InputLabelProps,
-                ...(labelShrink && { shrink: true }),
-            }}
-        />
-    );
-
-    /**
-     * Render an option for the Autocomplete component.
-     *
-     * @param props - The HTML attributes for the <li> element.
-     * @param option - The option to render.
-     * @param state - The state of the option being rendered.
-     * @returns - The rendered option.
-     */
-    const renderOption = (props: React.HTMLAttributes<HTMLLIElement>, option: any, state: AutocompleteRenderOptionState) => {
-        const { current: labels } = labels$;
-        return (
-            <li {...props}>
-                <Checkbox
-                    icon={icon}
-                    checkedIcon={checkedIcon}
-                    style={{ marginRight: 8 }}
-                    checked={state.selected}
-                />
-                {freeSolo ? option : (labels[option] || `${option} (unknown)`)}
-            </li>
-        );
-    };
+    const data = useMemo(() => state.options.map((value) => ({
+        value,
+        label: state.labels[value],
+    })), [state]);
 
     if (loading || !initComplete.current) {
         return (
-            <Autocomplete
-                multiple
-                disableCloseOnSelect
-                disableClearable={noDeselect}
-                loading
+            <MultiSelect
+                {...MANTINE_CONFIG}
+                variant={outlined ? "unstyled" : "filled"}
                 disabled
-                freeSolo={freeSolo}
-                onChange={() => null}
-                value={EMPTY_ARRAY}
-                options={EMPTY_ARRAY}
-                ListboxComponent={virtualListBox ? VirtualListBox : undefined}
-                getOptionLabel={getOptionLabel}
-                renderTags={renderTags}
-                renderInput={createRenderInput(true, true)}
-                renderOption={renderOption}
+                label={title}
+                error={(dirty && (invalid || incorrect))}
+                description={description}
+                placeholder={LOADING_LABEL}
+                comboboxProps={{
+                    withinPortal: false,
+                    zIndex: MANTINE_POPOVER_ZINDEX,
+                }}
             />
         );
     }
 
     return (
-        <Autocomplete
-            key={reloadTrigger}
-            multiple
-            loading={loading}
-            disabled={disabled}
-            disableCloseOnSelect
-            disableClearable={noDeselect}
-            freeSolo={freeSolo}
-            readOnly={readonly}
-            open={opened}
-            onChange={({ }, value) => handleChange(value)}
-            onOpen={() => {
-                if (fieldReadonly) {
-                    return;
-                }
-                if (!isMobile) {
-                    setOpened(true)
-                    return;
-                }
-                pickModal();
-            }}
-            onClose={() => setOpened(false)}
-            getOptionLabel={getOptionLabel}
-            ListboxComponent={virtualListBox ? VirtualListBox : undefined}
+        <MultiSelect
+            {...MANTINE_CONFIG}
             value={value}
-            options={state.options}
-            renderTags={renderTags}
-            renderInput={createRenderInput(false, !!readonly)}
-            renderOption={renderOption}
+            variant={outlined ? "unstyled" : "filled"}
+            onChange={handleChange}
+            label={title}
+            disabled={disabled}
+            readOnly={readonly}
+            error={(dirty && (invalid || incorrect))}
+            description={description}
+            placeholder={placeholder}
+            data={data}
+            comboboxProps={{
+                withinPortal: true,
+                zIndex: MANTINE_POPOVER_ZINDEX,
+            }}
         />
     );
 };

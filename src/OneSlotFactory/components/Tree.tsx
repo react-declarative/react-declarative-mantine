@@ -1,7 +1,34 @@
-import * as React from "react";
-import { ITreeSlot, useOnePayload, useOneState, useAsyncValue, TreeView } from "react-declarative";
+import * as React from 'react';
+import { useMemo, useState, useRef, useEffect } from 'react';
 
+import { ITreeSlot, useOneState, useOnePayload, useRenderWaiter, isObject, compareArray, useOneProps, useAsyncAction } from 'react-declarative';
+import { MultiSelect } from '@mantine/core';
+import { MANTINE_CONFIG, MANTINE_POPOVER_ZINDEX } from '../../config';
+import ITreeNode from 'react-declarative/model/ITreeNode';
+
+const LOADING_LABEL = "Loading";
 const EMPTY_ARRAY: any[] = [];
+
+const getArrayHash = (value: any) =>
+  Object.values<string>(value || {})
+    .sort((a, b) => b.localeCompare(a))
+    .join('-');
+
+const deepFlat = (arr: ITreeNode[] = []) => {
+  const result: ITreeNode[] = [];
+  const process = (entries: any[] = []) => entries.forEach((entry) => {
+    const options = entry['child'] || [];
+    process([...options]);
+    result.push(entry);
+  });
+  process(arr);
+  return result;
+};
+
+interface IState {
+  options: string[];
+  labels: Record<string, string>;
+}
 
 /**
  * Creates a Tree component with customizable options.
@@ -26,7 +53,7 @@ const EMPTY_ARRAY: any[] = [];
 export const Tree = ({
   invalid,
   incorrect,
-  value,
+  value: upperValue,
   disabled,
   readonly,
   description = "",
@@ -37,59 +64,159 @@ export const Tree = ({
   loading: upperLoading,
   onChange,
   itemTree = EMPTY_ARRAY,
+  watchItemTree,
 }: ITreeSlot) => {
-  const payload = useOnePayload();
+
   const { object } = useOneState();
+  const payload = useOnePayload();
+
+  const [state, setState] = useState<IState>(() => ({
+    options: [],
+    labels: {},
+  }));
+
+  const initComplete = useRef(false);
+
+  const waitForRender = useRenderWaiter([state], 10);
 
   /**
-   * Represents a collection of items.
+   * Memoized value casted to array.
    *
-   * @typedef Items
-   * @property name - The name of the item.
-   * @property quantity - The quantity of the item.
-   * @property [description] - The description of the item. (Optional)
-   * @property [tags] - The tags associated with the item. (Optional)
+   * @type {Array}
+   * @param upperValue - The value used to compute the memoized array.
+   * @returns - The memoized array value.
    */
-  const [items, { loading: currentLoading }] = useAsyncValue(
-    async () => {
-      if (typeof itemTree === 'function') {
-        return await itemTree(object, payload);
-      } else {
-        return itemTree;
-      }
-    },
-    {
-      deps: [value],
+  const arrayValue = useMemo(() => {
+    if (typeof upperValue === 'string') {
+      return [upperValue];
     }
-  );
+    if (upperValue) {
+      const result = Object.values<string>(upperValue);
+      return isObject(result) ? [] : result;
+    }
+    return [];
+  }, [upperValue]);
 
-  const loading = upperLoading || currentLoading;
+  const prevValue = useRef(arrayValue);
+
+  /**
+   * Memoizes the value based on the input array value.
+   *
+   * @param arrayValue - The array value.
+   * @returns - The memoized value.
+   */
+  const value = useMemo(() => {
+    if (compareArray(prevValue.current, arrayValue)) {
+      return prevValue.current;
+    }
+    prevValue.current = arrayValue;
+    return arrayValue;
+  }, [arrayValue]);
+
+  const {
+    fallback,
+  } = useOneProps();
+
+  const {
+    loading,
+    execute,
+  } = useAsyncAction(async (object) => {
+    const labels: Record<string, string> = {};
+    const options: string[] = [];
+    let nodes: ITreeNode[] = typeof itemTree === "function" ? await itemTree(object, payload) : itemTree;
+    nodes = deepFlat(nodes);
+    nodes.forEach(({ label, value, child }) => {
+      if (child) {
+        return;
+      }
+      options.push(value);
+      labels[value] = label;
+    });
+    setState({ options, labels });
+    initComplete.current = true;
+    await waitForRender();
+  }, {
+    fallback,
+  });
+
+  const valueHash = getArrayHash(value);
+  const prevObject = useRef<any>(null);
+  const initial = useRef(true);
+
+  useEffect(() => {
+    if (!initial.current) {
+      if (prevObject.current === object) {
+        return;
+      }
+      if (!watchItemTree) {
+        return;
+      }
+    }
+    prevObject.current = object;
+    initial.current = false;
+    execute(object);
+  }, [
+    valueHash,
+    disabled,
+    dirty,
+    invalid,
+    incorrect,
+    object,
+    readonly,
+  ]);
+
+  /**
+   * Handles a change event by calling the provided onChange function with the value.
+   * If the value is an empty string or undefined, null is passed to the onChange function.
+   * After calling onChange, the changeSubject is notified.
+   *
+   * @param value - The value to be passed to the onChange function.
+   * @returns
+   */
+  const handleChange = (value: any) => {
+    onChange(value?.length ? value : null);
+  };
+
+  const data = useMemo(() => state.options.map((value) => ({
+    value,
+    label: state.labels[value],
+  })), [state]);
+
+  if (loading || upperLoading || !initComplete.current) {
+    return (
+      <MultiSelect
+        {...MANTINE_CONFIG}
+        variant={outlined ? "unstyled" : "filled"}
+        disabled
+        label={title}
+        error={(dirty && (invalid || incorrect))}
+        description={description}
+        placeholder={LOADING_LABEL}
+        comboboxProps={{
+          withinPortal: false,
+          zIndex: MANTINE_POPOVER_ZINDEX,
+        }}
+      />
+    );
+  }
 
   return (
-    <TreeView
-      fullWidth
-      sx={{
-        flex: 1,
-        ...(!outlined && {
-          position: "relative",
-          mt: 1,
-          "& .MuiFormHelperText-root": {
-            position: "absolute",
-            top: "100%",
-          },
-        }),
-      }}
-      readOnly={readonly}
-      loading={loading}
-      items={items || EMPTY_ARRAY}
-      value={items?.length ? value : null}
-      disabled={disabled || loading}
-      variant={outlined ? "outlined" : "standard"}
-      helperText={(dirty && (invalid || incorrect)) || description}
-      error={dirty && (invalid !== null || incorrect !== null)}
-      placeholder={placeholder}
+    <MultiSelect
+      {...MANTINE_CONFIG}
+      value={value}
+      variant={outlined ? "unstyled" : "filled"}
+      onChange={handleChange}
       label={title}
-      onChange={onChange}
+      disabled={disabled}
+      readOnly={readonly}
+      error={(dirty && (invalid || incorrect))}
+      description={description}
+      placeholder={placeholder}
+      data={data}
+      comboboxProps={{
+        withinPortal: true,
+        zIndex: MANTINE_POPOVER_ZINDEX,
+      }}
     />
   );
 };
