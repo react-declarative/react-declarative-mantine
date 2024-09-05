@@ -184,7 +184,8 @@ export const Items = ({
                 description={description}
                 placeholder={LOADING_LABEL}
                 comboboxProps={{
-                    withinPortal: false,
+                    withinPortal: true,
+                    shadow: 'xl',
                     zIndex: MANTINE_POPOVER_ZINDEX,
                 }}
             />
@@ -206,6 +207,7 @@ export const Items = ({
             data={data}
             comboboxProps={{
                 withinPortal: true,
+                shadow: 'xl',
                 zIndex: MANTINE_POPOVER_ZINDEX,
             }}
         />
