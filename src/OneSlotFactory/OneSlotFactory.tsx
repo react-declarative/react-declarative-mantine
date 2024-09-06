@@ -15,6 +15,7 @@ import ComboArray from './components/ComboArray';
 import Switch from './components/Switch';
 import Radio from './components/Radio';
 import CheckBox from './components/CheckBox';
+import Slider from './components/Slider';
 
 interface IOneSlotFactoryProps {
     children: React.ReactNode;
@@ -33,6 +34,7 @@ export const defaultSlots = {
     YesNo,
     Switch,
     Radio,
+    Slider,
     CheckBox,
 };
 
