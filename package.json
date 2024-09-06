@@ -1,6 +1,6 @@
 {
   "name": "react-declarative-mantine",
-  "version": "0.0.37",
+  "version": "0.0.38",
   "description": "The Mantine ui kit bindings for react-declarative",
   "private": false,
   "author": {
@@ -13,8 +13,10 @@
     "url": "http://paypal.me/tripolskypetr"
   },
   "license": "MIT",
-  "homepage": "https://react-declarative-playground.github.io",
+  "homepage": "https://react-declarative-mantine.github.io",
   "keywords": [
+    "mantine",
+    "mui",
     "react-declarative",
     "ui kit",
     "bindings",
@@ -23,11 +25,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/react-declarative/react-declarative",
-    "documentation": "https://github.com/react-declarative/react-declarative/tree/master/docs"
+    "url": "https://github.com/react-declarative/react-declarative-mantine",
+    "documentation": "https://github.com/react-declarative/react-declarative-mantine/tree/master/docs"
   },
   "bugs": {
-    "url": "https://github.com/react-declarative/react-declarative/issues"
+    "url": "https://github.com/react-declarative/react-declarative-mantine/issues"
   },
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -62,7 +64,7 @@
     "@mui/material": "*",
     "@mui/system": "*",
     "react": "*",
-    "react-declarative": "*",
+    "react-declarative-mantine": "*",
     "react-dom": "*"
   },
   "devDependencies": {
@@ -79,7 +81,7 @@
     "glob": "11.0.0",
     "prettier": "3.2.5",
     "react": "^18.0.0",
-    "react-declarative": "^2.6.195",
+    "react-declarative-mantine": "^2.6.195",
     "react-dom": "^18.0.0",
     "rollup": "2.79.1",
     "rollup-plugin-peer-deps-external": "2.2.4",
