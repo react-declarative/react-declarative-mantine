@@ -10,6 +10,7 @@ export const Radio = ({
     onChange,
     title,
     radioValue,
+    readonly,
     value,
     name = '',
 }: IRadioSlot) => {
@@ -43,11 +44,17 @@ export const Radio = ({
             mt="xs"
             mb="xs"
             checked={checked}
+            readOnly={readonly}
             style={{
                 opacity: disabled ? 0.5 : undefined,
             }}
             disabled={disabled}
-            onChange={() => handleChange(radioValue || null)}
+            onChange={() => {
+                if (readonly) {
+                    return;
+                }
+                handleChange(radioValue || null);
+            }}
             label={title}
         />
     );
