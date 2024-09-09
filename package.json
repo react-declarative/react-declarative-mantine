@@ -1,6 +1,6 @@
 {
   "name": "react-declarative-mantine",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "description": "The Mantine ui kit bindings for react-declarative",
   "private": false,
   "author": {
@@ -79,6 +79,7 @@
     "eslint": "8.57.0",
     "eslint-plugin-jsdoc": "48.2.1",
     "glob": "11.0.0",
+    "million": "3.1.11",
     "prettier": "3.2.5",
     "react": "^18.0.0",
     "react-declarative": "^2.6.195",
