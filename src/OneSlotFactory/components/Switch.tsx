@@ -9,6 +9,7 @@ export const Switch = ({
   value,
   onChange,
   title,
+  switchActiveLabel,
 }: ISwitchSlot) => {
   return (
     <UiSwitch
@@ -21,7 +22,7 @@ export const Switch = ({
       checked={Boolean(value)}
       disabled={disabled}
       onChange={() => onChange(!value)}
-      label={title}
+      label={switchActiveLabel || title}
     />
   );
 };
