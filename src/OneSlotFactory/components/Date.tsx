@@ -27,7 +27,7 @@ export const Date = ({
     if (value) {
       const date = datetime.parseDate(value);
       if (!date) {
-        return undefined;
+        return null;
       }
       let now = dayjs();
       now = now.set("date", date.day);
@@ -35,7 +35,7 @@ export const Date = ({
       now = now.set("year", date.year);
       return now.toDate();
     }
-    return undefined;
+    return null;
   }, [value]);
 
   return (
