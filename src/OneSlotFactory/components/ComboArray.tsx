@@ -172,6 +172,7 @@ export const ComboArray = ({
     return (
       <Select
         {...MANTINE_CONFIG}
+        searchable
         variant={outlined ? "default" : "filled"}
         disabled
         label={title}
@@ -190,6 +191,7 @@ export const ComboArray = ({
   return (
     <Select
       {...MANTINE_CONFIG}
+      searchable
       value={value}
       allowDeselect={!noDeselect}
       variant={outlined ? "default" : "filled"}

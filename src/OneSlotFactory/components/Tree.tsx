@@ -186,6 +186,7 @@ export const Tree = ({
     return (
       <MultiSelect
         {...MANTINE_CONFIG}
+        searchable
         variant={outlined ? "default" : "filled"}
         disabled
         label={title}
@@ -204,6 +205,7 @@ export const Tree = ({
   return (
     <MultiSelect
       {...MANTINE_CONFIG}
+      searchable
       value={value}
       variant={outlined ? "default" : "filled"}
       onChange={handleChange}
