@@ -295,7 +295,7 @@ export const Text = ({
   }, [inputElementRef.current]);
 
   useLayoutEffect(() => {
-    if (template) {
+    if (template || replace || allowed) {
       caretManager.render();
     }
   }, [value]);
@@ -389,7 +389,7 @@ export const Text = ({
       )}
       onChange={({ target }) => {
         let result = target.value;
-        if (template) {
+        if (template || replace || allowed) {
           result = "";
           for (let i = 0; i < target.value.length; i++) {
             result += target.value[i];
