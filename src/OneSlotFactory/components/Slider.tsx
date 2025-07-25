@@ -10,6 +10,8 @@ export const Slider = ({
   onChange,
   minSlider,
   maxSlider,
+  sliderSteps,
+  labelFormatSlider,
 }: ISliderSlot) => {
   return (
     <UiSlider
@@ -19,10 +21,12 @@ export const Slider = ({
       style={{
         opacity: disabled ? 0.5 : undefined,
       }}
+      label={labelFormatSlider}
       value={value}
       min={minSlider}
       max={maxSlider}
       disabled={disabled}
+      marks={sliderSteps}
       onChange={(value) => onChange(value)}
     />
   );

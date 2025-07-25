@@ -1,6 +1,6 @@
 {
   "name": "react-declarative-mantine",
-  "version": "0.0.51",
+  "version": "0.0.52",
   "description": "The Mantine ui kit bindings for react-declarative",
   "private": false,
   "author": {
@@ -82,7 +82,7 @@
     "million": "3.1.11",
     "prettier": "3.2.5",
     "react": "^18.0.0",
-    "react-declarative": "^2.7.105",
+    "react-declarative": "^2.7.106",
     "react-dom": "^18.0.0",
     "rollup": "2.79.1",
     "rollup-plugin-peer-deps-external": "2.2.4",
