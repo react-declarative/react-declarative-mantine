@@ -15,7 +15,7 @@ export const Slider = ({
 }: ISliderSlot) => {
   return (
     <UiSlider
-      size="md"
+      size="xl"
       mt="xs"
       mb="xs"
       style={{
