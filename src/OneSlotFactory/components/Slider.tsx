@@ -11,6 +11,7 @@ export const Slider = ({
   minSlider,
   maxSlider,
   sliderSteps,
+  stepSlider,
   labelFormatSlider,
 }: ISliderSlot) => {
   return (
@@ -21,6 +22,7 @@ export const Slider = ({
       style={{
         opacity: disabled ? 0.5 : undefined,
       }}
+      step={stepSlider}
       label={labelFormatSlider}
       value={value}
       min={minSlider}
