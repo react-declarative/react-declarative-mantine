@@ -113,6 +113,8 @@ export const Complete = ({
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(null);
 
+  const open = !!anchorEl;
+
   /**
    * Handles click events.
    *

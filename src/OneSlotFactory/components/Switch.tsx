@@ -6,6 +6,7 @@ import { ISwitchSlot } from 'react-declarative';
 
 export const Switch = ({
   disabled,
+  readonly,
   value,
   onChange,
   title,
@@ -21,7 +22,13 @@ export const Switch = ({
       }}
       checked={Boolean(value)}
       disabled={disabled}
-      onChange={() => onChange(!value)}
+      readOnly={readonly}
+      onChange={() => {
+        if (readonly) {
+          return;
+        }
+        onChange(!value);
+      }}
       label={switchActiveLabel || title}
     />
   );

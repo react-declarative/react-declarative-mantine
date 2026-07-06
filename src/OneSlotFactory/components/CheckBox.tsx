@@ -6,6 +6,7 @@ import { ICheckBoxSlot } from 'react-declarative';
 
 export const CheckBox = ({
     disabled,
+    readonly,
     onChange,
     title,
     value,
@@ -15,11 +16,17 @@ export const CheckBox = ({
         mt="xs"
         mb="xs"
         disabled={disabled}
+        readOnly={readonly}
         style={{
             opacity: disabled ? 0.5 : undefined,
         }}
         checked={Boolean(value)}
-        onChange={() => onChange(!value)}
+        onChange={() => {
+            if (readonly) {
+                return;
+            }
+            onChange(!value);
+        }}
         label={title}
     />
 );

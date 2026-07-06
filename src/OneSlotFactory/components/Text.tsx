@@ -304,6 +304,7 @@ export const Text = ({
     return (
       <Textarea
         {...MANTINE_CONFIG}
+        variant={outlined ? "default" : "filled"}
         ref={(input) => {
           inputElementRef.current = input as unknown as HTMLInputElement;
           inputRef && inputRef(input as unknown as HTMLInputElement);
