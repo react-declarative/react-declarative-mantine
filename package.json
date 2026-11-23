@@ -1,6 +1,6 @@
 {
   "name": "react-declarative-mantine",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "The Mantine ui kit bindings for react-declarative",
   "private": false,
   "author": {
@@ -58,8 +58,8 @@
     "README.md"
   ],
   "peerDependencies": {
-    "@mantine/core": "*",
-    "@mantine/dates": "*",
+    "@mantine/core": "^7.12.2",
+    "@mantine/dates": "^7.12.2",
     "@mui/icons-material": "*",
     "@mui/material": "*",
     "@mui/system": "*",
